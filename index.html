@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tryflow — Software op maat</title>
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700,800,900">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #0c0c0c;
+      --text:   #e8e4db;
+      --muted:  #5a5750;
+      --gold:   #c8a84b;
+      --border: rgba(232,228,219,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 2.5rem;
+      mix-blend-mode: difference;
+    }
+    .nav-logo {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      text-transform: lowercase;
+    }
+    .nav-logo b { color: var(--gold); font-weight: 900; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .nav-link {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .nav-link:hover { opacity: 1; }
+    .nav-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: blink 2.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 2.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-nr {
+      position: absolute;
+      top: 50%;
+      right: -2vw;
+      transform: translateY(-50%);
+      font-size: clamp(18rem, 32vw, 38rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(232,228,219,0.04);
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    .hero-top {
+      position: absolute;
+      top: 6rem;
+      right: 2.5rem;
+      text-align: right;
+      z-index: 1;
+    }
+    .hero-top-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .hero-top-val {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+    .hero-top-val span { color: var(--gold); }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    h1 {
+      font-size: clamp(3.5rem, 9vw, 10rem);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 0.92;
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+    h1 .line-gold { color: var(--gold); }
+    h1 .line-outline {
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--text);
+    }
+
+    .hero-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+    .hero-desc {
+      max-width: 36ch;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(232,228,219,0.55);
+      font-weight: 400;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--text);
+      padding: 1rem 1.75rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .hero-cta:hover { background: var(--gold); transform: translateY(-2px); }
+    .hero-cta svg { transition: transform 0.2s; }
+    .hero-cta:hover svg { transform: translateX(4px); }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 1rem 0;
+      position: relative;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      width: max-content;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      padding: 0 2.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .marquee-sep {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ── DEMOS ── */
+    .demos {
+      padding: 6rem 2.5rem;
+    }
+    .demos-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 4rem;
+      gap: 2rem;
+    }
+    .demos-header h2 {
+      font-size: clamp(1.6rem, 3.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text);
+    }
+    .demos-header p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 32ch;
+      line-height: 1.65;
+      text-align: right;
+    }
+
+    /* Project list — editorial rows */
+    .project-list { border-top: 1px solid var(--border); }
+
+    .project-row {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      gap: 2rem;
+      padding: 2.25rem 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      position: relative;
+      transition: padding-left 0.4s cubic-bezier(0.16,1,0.3,1);
+      overflow: hidden;
+    }
+    .project-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0;
+      background: var(--gold);
+      transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .project-row.is-live:hover::before { width: 3px; }
+    .project-row.is-live:hover { padding-left: 1.25rem; }
+
+    .project-nr {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .project-info { display: flex; flex-direction: column; gap: 0.35rem; }
+    .project-name {
+      font-size: clamp(1.2rem, 2.5vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .project-row.is-live:hover .project-name { color: var(--gold); }
+    .project-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.4rem;
+    }
+    .project-tag {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.55rem;
+      border-radius: 3px;
+    }
+    .project-sector {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .project-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .project-status {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .status-live { color: #4ade80; }
+    .status-soon { color: var(--muted); }
+    .project-arrow {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      transition: border-color 0.2s, color 0.2s, transform 0.3s cubic-bezier(0.16,1,0.3,1), background 0.2s;
+      flex-shrink: 0;
+    }
+    .project-row.is-live:hover .project-arrow {
+      border-color: var(--gold);
+      color: var(--bg);
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+    .project-row.is-soon { opacity: 0.38; pointer-events: none; }
+
+    /* ── HOW ── */
+    .how {
+      padding: 6rem 2.5rem;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .how-left h2 {
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: var(--text);
+      position: sticky;
+      top: 7rem;
+    }
+    .how-steps { display: flex; flex-direction: column; gap: 0; }
+    .how-step {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 2rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .how-step.visible { opacity: 1; transform: none; }
+    .how-step:nth-child(2) { transition-delay: 0.1s; }
+    .how-step:nth-child(3) { transition-delay: 0.2s; }
+    .how-step-nr {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding-top: 0.35rem;
+    }
+    .how-step h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+    .how-step p { font-size: 0.88rem; line-height: 1.7; color: var(--muted); }
+
+    /* ── CONTACT ── */
+    .contact {
+      padding: 6rem 2.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .contact-left {}
+    .contact-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .contact-eyebrow::before { content:''; display:block; width:20px; height:1px; background:var(--gold); }
+    .contact h2 {
+      font-size: clamp(2rem, 5vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 0.95;
+      color: var(--text);
+    }
+    .contact h2 .outline {
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(232,228,219,0.25);
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-decoration: none;
+      margin-top: 2rem;
+      letter-spacing: 0.01em;
+      position: relative;
+    }
+    .contact-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .contact-link:hover::after { transform: scaleX(1); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.75rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-logo { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+    .footer-logo b { color: var(--gold); }
+    .footer-right { font-size: 0.72rem; color: var(--muted); }
+
+    /* ── SCRAMBLE TEXT ── */
+    .scramble { display: inline-block; }
+
+    /* ── SCROLL REVEALS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-d1 { transition-delay: 0.08s; }
+    .reveal-d2 { transition-delay: 0.16s; }
+    .reveal-d3 { transition-delay: 0.24s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.25rem; }
+      .hero { padding: 0 1.25rem 2.5rem; }
+      .hero-top { right: 1.25rem; top: 5.5rem; }
+      .hero-top-val { font-size: 2.2rem; }
+      .hero-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
+      .demos { padding: 4rem 1.25rem; }
+      .demos-header { flex-direction: column; gap: 1rem; }
+      .demos-header p { text-align: left; }
+      .project-row { grid-template-columns: 48px 1fr; }
+      .project-right { display: none; }
+      .how { grid-template-columns: 1fr; padding: 4rem 1.25rem; gap: 2.5rem; }
+      .how-left h2 { position: static; }
+      .contact { padding: 4rem 1.25rem; }
+      footer { padding: 1.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">try<b>flow</b>.be</div>
+    <div class="nav-right">
+      <div class="nav-dot"></div>
+      <a href="#demos" class="nav-link">Demo's</a>
+      <a href="mailto:anthony@dsa-consulting.be" class="nav-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-nr" aria-hidden="true">01</div>
+
+    <div class="hero-top">
+      <div class="hero-top-label">Actieve demo's</div>
+      <div class="hero-top-val"><span id="counter">0</span></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Op maat gebouwde software</div>
+      <h1>
+        <span class="line-1 scramble">Software</span><br>
+        <span class="line-gold scramble">die werkt.</span><br>
+        <span class="line-outline scramble">Live.</span>
+      </h1>
+      <div class="hero-bottom">
+        <p class="hero-desc">
+          Geen mockups, geen slidedeck. Werkende applicaties die u vandaag al kunt uittesten — en morgen uw eigendom zijn.
+        </p>
+        <a href="#demos" class="hero-cta">
+          Bekijk de demo's
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+      <!-- Set 1 -->
+      <div class="marquee-item">Rental Screening <div class="marquee-sep"></div></div>
+      <div class="marquee-item">GDPR-conform <div class="marquee-sep"></div></div>
+      <div class="marquee-item">AI-scoring <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Vlaamse Woninghuurwet <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Op maat <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Uw eigendom <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Geen licentiekosten <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Broncode inbegrepen <div class="marquee-sep"></div></div>
+      <div class="marquee-item">DSA Consulting <div class="marquee-sep"></div></div>
+      <!-- Set 2 (duplicate for seamless loop) -->
+      <div class="marquee-item">Rental Screening <div class="marquee-sep"></div></div>
+      <div class="marquee-item">GDPR-conform <div class="marquee-sep"></div></div>
+      <div class="marquee-item">AI-scoring <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Vlaamse Woninghuurwet <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Op maat <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Uw eigendom <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Geen licentiekosten <div class="marquee-sep"></div></div>
+      <div class="marquee-item">Broncode inbegrepen <div class="marquee-sep"></div></div>
+      <div class="marquee-item">DSA Consulting <div class="marquee-sep"></div></div>
+    </div>
+  </div>
+
+  <!-- DEMOS -->
+  <section class="demos" id="demos">
+    <div class="demos-header">
+      <h2 class="reveal">Beschikbare<br>toepassingen</h2>
+      <p class="reveal reveal-d1">Volledig werkende software — geen demo-modus, geen beperkingen. Test alles.</p>
+    </div>
+
+    <div class="project-list reveal reveal-d2">
+
+      <a class="project-row is-live" href="https://immo.tryflow.be" target="_blank">
+        <div class="project-nr">001</div>
+        <div class="project-info">
+          <div class="project-name">Rental Screening</div>
+          <div class="project-sector">Vastgoed &amp; Verhuur</div>
+          <div class="project-tags">
+            <span class="project-tag">AI-analyse</span>
+            <span class="project-tag">Document upload</span>
+            <span class="project-tag">GDPR</span>
+            <span class="project-tag">Statusworkflow</span>
+          </div>
+        </div>
+        <div class="project-right">
+          <span class="project-status status-live">Live</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <div class="project-row is-soon">
+        <div class="project-nr">002</div>
+        <div class="project-info">
+          <div class="project-name">Planning Suite</div>
+          <div class="project-sector">Dienstensector</div>
+        </div>
+        <div class="project-right">
+          <span class="project-status status-soon">Binnenkort</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-row is-soon">
+        <div class="project-nr">003</div>
+        <div class="project-info">
+          <div class="project-name">Ops Dashboard</div>
+          <div class="project-sector">Productie &amp; Logistiek</div>
+        </div>
+        <div class="project-right">
+          <span class="project-status status-soon">Binnenkort</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <div class="how">
+    <div class="how-left reveal">
+      <h2>Van demo<br>naar uw<br>eigendom.</h2>
+    </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-step-nr">01</div>
+        <div>
+          <h3>Verken de live demo</h3>
+          <p>U test de applicatie volledig — alle functies, alle schermen. Geen registratie, geen verborgen beperkingen. Wat u ziet is wat u krijgt.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-nr">02</div>
+        <div>
+          <h3>Samen aanpassen</h3>
+          <p>We bespreken wat relevant is voor uw situatie: andere naam, andere workflow, extra integraties. De basis staat, de aanpassing is maatwerk.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-nr">03</div>
+        <div>
+          <h3>Overdracht &amp; eigendom</h3>
+          <p>U ontvangt de volledige broncode op uw eigen server of hosting. Geen licenties, geen maandelijkse kosten, geen vendor lock-in. Het is van u.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact">
+    <div class="contact-left reveal">
+      <div class="contact-eyebrow">Interesse?</div>
+      <h2>Neem<br>contact<br><span class="outline">op.</span></h2>
+      <a href="mailto:anthony@dsa-consulting.be" class="contact-link">
+        anthony@dsa-consulting.be
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">try<b>flow</b>.be — DSA Consulting</div>
+    <div class="footer-right">&copy; 2026</div>
+  </footer>
+
+<script>
+  // ── Counter animatie ──────────────────────────────────────────────
+  (function() {
+    const el = document.getElementById('counter');
+    const target = 1;
+    let cur = 0;
+    const step = () => {
+      cur++;
+      el.textContent = cur;
+      if (cur < target) requestAnimationFrame(step);
+    };
+    setTimeout(() => requestAnimationFrame(step), 800);
+  })();
+
+  // ── Text scramble ─────────────────────────────────────────────────
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@&';
+  function scramble(el, finalText, duration = 900) {
+    let frame = 0;
+    const totalFrames = Math.round(duration / 16);
+    const run = () => {
+      const progress = frame / totalFrames;
+      el.textContent = finalText.split('').map((ch, i) => {
+        if (ch === ' ') return ' ';
+        if (i / finalText.length < progress * 1.4) return ch;
+        return CHARS[Math.floor(Math.random() * CHARS.length)];
+      }).join('');
+      frame++;
+      if (frame <= totalFrames) requestAnimationFrame(run);
+      else el.textContent = finalText;
+    };
+    run();
+  }
+
+  window.addEventListener('load', () => {
+    const els = document.querySelectorAll('.scramble');
+    els.forEach((el, i) => {
+      const text = el.textContent;
+      setTimeout(() => scramble(el, text, 800), 200 + i * 180);
+    });
+  });
+
+  // ── Scroll reveal ─────────────────────────────────────────────────
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal, .how-step').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
